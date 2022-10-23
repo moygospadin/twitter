@@ -1,0 +1,102 @@
+{
+  "collection": "@nestjs/schematics",
+  "compilerOptions": {
+    "plugins": [
+      {
+        "name": "@nestjs/graphql",
+        "options": {
+          "typeFileNameSuffix": [".input.ts", ".dto.ts", ".result.ts", ".error.ts"],
+          "introspectComments": true
+        }
+      }
+    ],
+    "webpack": true,
+    "tsConfigPath": "apps/twitter/tsconfig.app.json"
+  },
+  "monorepo": true,
+  "projects": {
+    "twitter": {
+      "type": "twitter",
+      "root": "apps/twitter",
+      "entryFile": "main",
+      "sourceRoot": "apps/twitter/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/twitter/tsconfig.app.json"
+      }
+    },
+    "auth": {
+      "type": "library",
+      "root": "libs/auth",
+      "entryFile": "index",
+      "sourceRoot": "libs/auth/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/auth/tsconfig.lib.json"
+      }
+    },
+    "aws": {
+      "type": "library",
+      "root": "libs/aws",
+      "entryFile": "index",
+      "sourceRoot": "libs/aws/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/aws/tsconfig.lib.json"
+      }
+    },
+    "crypto": {
+      "type": "library",
+      "root": "libs/crypto",
+      "entryFile": "index",
+      "sourceRoot": "libs/crypto/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/amqp/tsconfig.lib.json"
+      }
+    },
+    "exceptions": {
+      "type": "library",
+      "root": "libs/exceptions",
+      "entryFile": "index",
+      "sourceRoot": "libs/exceptions/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/exceptions/tsconfig.lib.json"
+      }
+    },
+    "graphql": {
+      "compilerOptions": {
+        "tsConfigPath": "libs/graphql/tsconfig.lib.json"
+      },
+      "entryFile": "index",
+      "root": "libs/graphql",
+      "sourceRoot": "libs/graphql/src",
+      "type": "library"
+    },
+    "postgresql": {
+      "type": "library",
+      "root": "libs/postgresql",
+      "entryFile": "index",
+      "sourceRoot": "libs/postgresql/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/postgresql/tsconfig.lib.json"
+      }
+    },
+    "redis": {
+      "type": "library",
+      "root": "libs/redis",
+      "entryFile": "index",
+      "sourceRoot": "libs/redis/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/redis/tsconfig.lib.json"
+      }
+    },
+    "twitter-chat": {
+      "compilerOptions": {
+        "tsConfigPath": "apps/twitter-chat/tsconfig.app.json"
+      },
+      "entryFile": "main",
+      "root": "apps/twitter-chat",
+      "sourceRoot": "apps/twitter-chat/src",
+      "type": "application"
+    }
+  },
+  "root": "apps/twitter",
+  "sourceRoot": "apps/twitter/src"
+}

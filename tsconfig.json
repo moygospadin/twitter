@@ -1,0 +1,38 @@
+{
+  "ts-node": {
+    "files": true
+  },
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
+    "declaration": true,
+    "emitDecoratorMetadata": true,
+    "esModuleInterop": true,
+    "experimentalDecorators": true,
+    "incremental": true,
+    "module": "commonjs",
+    "outDir": "./dist",
+    "types": ["@types/jest"],
+    "typeRoots": ["./node_modules/@nestjs/config/dist/config.service.d.ts"],
+    "paths": {
+      "@ddd/core": ["libs/ddd/src"],
+      "@libs/auth": ["libs/auth/src"],
+      "@libs/crypto": ["libs/crypto/src"],
+      "@libs/exceptions": ["libs/exceptions/src"],
+      "@libs/graphql": ["libs/graphql/src"],
+      "@libs/lodash": ["libs/lodash/src"],
+      "@libs/prisma": ["libs/prisma/src"],
+      "@libs/prisma/*": ["libs/prisma/src/*"],
+      "@libs/rabbitmq": ["libs/rabbitmq/src"],
+      "@libs/rabbitmq/event-bus/*": ["libs/rabbitmq/src/event-bus/*"],
+      "@libs/redis": ["libs/redis/src"],
+      "@libs/time": ["libs/time/src"],
+      "@typings": ["typings"],
+    },
+    "removeComments": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strictBindCallApply": true,
+    "target": "ES2017"
+  }
+}

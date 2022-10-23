@@ -1,0 +1,1 @@
+export const TWEET_REPOSITORY_TOKEN = Symbol.for('TWEET_REPOSITORY_TOKEN');

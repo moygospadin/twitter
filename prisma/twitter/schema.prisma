@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../node_modules/@prisma/twitter"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("TWITTER_POSTGRES_URL")
+}
+
+model refreshTokens {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  expiredAt DateTime @db.Timestamptz(6)
+  userId    String   @db.Uuid
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId], map: "index_refresh_tokens_user_id")
+}
+
+model twitterRecordImages {
+  id             String         @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  key            String         @db.VarChar
+  recordId       String         @db.Uuid
+  url            String         @db.VarChar
+  twitterRecords twitterRecords @relation(fields: [recordId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model twitterRecords {
+  authorId                                         String?               @db.Uuid
+  createdAt                                        DateTime              @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  id                                               String                @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  isComment                                        Boolean
+  parentRecordAuthorId                             String?               @db.Uuid
+  parentRecordId                                   String?               @db.Uuid
+  text                                             String?
+  updatedAt                                        DateTime              @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  users_twitterRecords_authorIdTousers             users?                @relation("twitterRecords_authorIdTousers", fields: [authorId], references: [id], onUpdate: NoAction)
+  users_twitterRecords_parentRecordAuthorIdTousers users?                @relation("twitterRecords_parentRecordAuthorIdTousers", fields: [parentRecordAuthorId], references: [id], onUpdate: NoAction)
+  twitterRecords                                   twitterRecords?       @relation("twitterRecordsTotwitterRecords_parentRecordId", fields: [parentRecordId], references: [id], onUpdate: NoAction)
+  twitterRecordImages                              twitterRecordImages[]
+  other_twitterRecords                             twitterRecords[]      @relation("twitterRecordsTotwitterRecords_parentRecordId")
+}
+
+model userAvatars {
+  id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  key    String @db.VarChar
+  url    String @db.VarChar
+  userId String @unique @db.Uuid
+  users  users  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model userSessions {
+  id        String   @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt DateTime @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  expiredAt DateTime @db.Timestamptz(6)
+  userId    String   @db.Uuid
+  users     users    @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([userId], map: "index_user_sessions_user_id")
+}
+
+model userSocialMediaProfileLinks {
+  id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  name   String @db.VarChar
+  url    String @db.VarChar
+  userId String @db.Uuid
+  users  users  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model users {
+  id                                                        String                        @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt                                                 DateTime                      @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  email                                                     String                        @unique @db.VarChar
+  firstName                                                 String                        @db.VarChar
+  lastName                                                  String                        @db.VarChar
+  password                                                  String                        @db.VarChar
+  phoneNumber                                               String?                       @db.VarChar
+  updatedAt                                                 DateTime                      @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  chatAdmins                                                chatAdmins[]
+  chatMembers                                               chatMembers[]
+  chatsMessages                                             chatsMessages[]
+  refreshTokens                                             refreshTokens[]
+  twitterRecords_twitterRecords_authorIdTousers             twitterRecords[]              @relation("twitterRecords_authorIdTousers")
+  twitterRecords_twitterRecords_parentRecordAuthorIdTousers twitterRecords[]              @relation("twitterRecords_parentRecordAuthorIdTousers")
+  userAvatars                                               userAvatars?
+  userSessions                                              userSessions[]
+  userSocialMediaProfileLinks                               userSocialMediaProfileLinks[]
+
+  @@index([email], map: "index_users_email")
+}
+
+model chats {
+  id            String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  createdAt     DateTime        @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  title         String?         @db.VarChar
+  type          String          @db.VarChar
+  updatedAt     DateTime        @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  chatAdmins    chatAdmins[]
+  chatMembers   chatMembers[]
+  chatsMessages chatsMessages[]
+}
+
+model chatsMessages {
+  id                  String          @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chatId              String          @db.Uuid
+  createdAt           DateTime        @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  replyToMessageId    String?         @db.Uuid
+  text                String?
+  updatedAt           DateTime        @default(dbgenerated("timezone('utc'::text, now())")) @db.Timestamptz(6)
+  userId              String?         @db.Uuid
+  chats               chats           @relation(fields: [chatId], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  chatsMessages       chatsMessages?  @relation("chatsMessagesTochatsMessages_replyToMessageId", fields: [replyToMessageId], references: [id], onUpdate: NoAction)
+  users               users?          @relation(fields: [userId], references: [id], onUpdate: NoAction)
+  other_chatsMessages chatsMessages[] @relation("chatsMessagesTochatsMessages_replyToMessageId")
+}
+
+model chatAdmins {
+  id     String @id @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  chatId String @db.Uuid
+  type   String @db.VarChar
+  userId String @db.Uuid
+  chats  chats  @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users  users  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model chatMembers {
+  chatId String @db.Uuid
+  userId String @db.Uuid
+  chats  chats  @relation(fields: [chatId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  users  users  @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([chatId, userId])
+}

@@ -1,0 +1,1 @@
+export const SESSION_STORAGE_TOKEN = Symbol.for('SESSION_STORAGE_TOKEN');

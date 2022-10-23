@@ -1,0 +1,28 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - '4369:4369'
+      - '5672:5672'
+      - '25672:25672'
+      - '15672:15672'
+    networks:
+        - rabbitmq
+  redis:
+    image: redis:6.2-rc-alpine
+    ports:
+      - 6379:6379
+  postgres:
+    container_name: postgres
+    image: postgres:12
+    ports:
+      - 5433:5432
+    environment:
+      POSTGRES_DB: twitter
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+networks:
+  rabbitmq:
+    driver: bridge
